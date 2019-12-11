@@ -67,13 +67,14 @@ public class Course implements Serializable {
 	@Override
 	public String toString() {
 		return String.format(
-				"%s: %s\n"  // Course Id, Course Name
+				  "------------------------------------------------------------------\n"
+				+ "%s: %s\n"  // Course Id, Course Name
 				+ "%s Credits\n"  // Credits
-				+ "%s\n" // Description
-				+ "-----------------------",
+				+ "------------------------------------------------------------------\n"
+				+ "%s\n", // Description
 				getId(), getName(),
 				getCredits(),
-				getDescription()
+				getDescription().replace(". ", ".\n\n")
 				);
 	}
 }

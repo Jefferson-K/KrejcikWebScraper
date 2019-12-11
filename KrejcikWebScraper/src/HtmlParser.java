@@ -11,27 +11,31 @@ public class HtmlParser {
 	 * Parse Course ID from HTML
 	 */
 	public static String parseId(String line) {
+		line = line.replace("&nbsp;", " ");
 		line = line.substring(line.indexOf("<span>")+6);
 		line = line.substring(0, line.indexOf("</span>"));
-		return line;
+		return line.trim();
 	}
 	
 	/**
 	 * Parse Course Name from HTML
 	 */
 	public static String parseName(String line) {
+		line = line.replace("&nbsp;", " ");
 		line = line.substring(line.indexOf("</span>")+8);
 		line = line.replace("</a>", "");
-		return line;
+		return line.trim();
 	}
 	
 	/**
 	 * Parse Course Description from HTML
 	 */
 	public static String parseDescription(String line) {
+		line = line.replace("&nbsp;", " ");
 		line = line.replace("<p>", "");
+		line = line.replace("<p class=\"sc-BodyTextNS\">", "");
 		line = line.replace("</p>", "");
-		return line;
+		return line.trim();
 	}
 	
 	
@@ -61,7 +65,7 @@ public class HtmlParser {
 						
 						usc.nextLine();
 						line = usc.nextLine();
-						credits = line;
+						credits = line.trim();
 						
 						tempCourse = new Course(id, name, description, credits);
 						result.add(tempCourse);

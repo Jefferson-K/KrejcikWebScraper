@@ -2,6 +2,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -9,6 +10,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.Container;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
@@ -19,6 +21,8 @@ import javax.swing.JFileChooser;
 
 public class ApplicationWindow extends JFrame {
 	private JTextArea text;
+	private ArrayList<Course> courses;
+		
 	public void fillTextArea() {
 		try {
 			// SEE Min 54
@@ -56,10 +60,8 @@ public class ApplicationWindow extends JFrame {
 	}
 	
 	public ApplicationWindow() {
-		
-		
 		setTitle("Krejcik Web Scraper Application");
-		setBounds(100,50,400,500);
+		setBounds(100,50,500,500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		Container c = getContentPane();
@@ -73,22 +75,25 @@ public class ApplicationWindow extends JFrame {
 		JTextField jtfUrl = new JTextField("", 20);
 		
 		text = new JTextArea();
-		Font f = new Font("Monospaced", Font.BOLD, 24);
+		Font f = new Font("Monospaced", Font.BOLD, 12);
 		text.setFont(f);
 		text.setText("Enter a URL");
 		text.setEditable(false);
-		c.add(text, BorderLayout.CENTER);		
+		text.setLineWrap(true);
+		JScrollPane scroll = new JScrollPane(text);
+		c.add(scroll, BorderLayout.CENTER);		
 		
 		
 		JButton btnFetch = new JButton("Fetch");
 		btnFetch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Action
-				JOptionPane.showMessageDialog(null, "test"); // REMOVE!
+				// 
+				courses = HtmlParser.parseCourseData("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/70-Computer-Science");
+				text.setText(CourseFileWriter.writeCoursesToScreen(courses));
 			}
 		});
 		JButton btnSaveToText = new JButton("Save to Text");
-		btnFetch.addActionListener(new ActionListener() {
+		btnSaveToText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
 				JFileChooser jfc = new JFileChooser();
@@ -99,13 +104,14 @@ public class ApplicationWindow extends JFrame {
 			}
 		});
 		JButton btnSaveToJSON = new JButton("Save to JSON");
-		btnFetch.addActionListener(new ActionListener() {
+		btnSaveToJSON.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO
 				JFileChooser jfc = new JFileChooser();
 				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					// TODO CREATE FILE AT THIS LOCATION
 					// jfc.getSelectedFile().getPath();
+					
 				}
 			}
 		});
