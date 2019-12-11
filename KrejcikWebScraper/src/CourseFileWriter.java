@@ -1,3 +1,5 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import org.json.*;
@@ -29,7 +31,7 @@ public class CourseFileWriter {
 	 */
 	public static boolean writeCoursesToTextFile(ArrayList<Course> courses, String fname) {
 		try {
-			PrintWriter pw = new PrintWriter(fname);
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)));
 			for (Course c : courses) {
 				pw.println(c.tabDelimOutput());
 			}
@@ -49,7 +51,7 @@ public class CourseFileWriter {
 	 */
 	public static boolean writeCoursesToJSON(ArrayList<Course> courses, String fname) {
 		try {
-			PrintWriter pw = new PrintWriter(fname);
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)));
 			JSONObject courseObj;
 			JSONArray courseArr = new JSONArray();
 			for (Course c : courses) {

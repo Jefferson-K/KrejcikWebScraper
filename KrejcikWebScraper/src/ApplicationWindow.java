@@ -5,7 +5,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -19,18 +18,19 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JFileChooser;
 
+/**
+ * Main application window for the Lewis Course Catalog Screen Scraper
+ * @author Jeff
+ *
+ */
 public class ApplicationWindow extends JFrame {
 	private JTextArea text;
+	private JTextField jtfUrl = new JTextField("", 30);
 	private ArrayList<Course> courses;
-		
-	public void fillTextArea() {
-		try {
-			// SEE Min 54
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
 	
+	/**
+	 * Menu bars
+	 */
 	public void setupMenu() {
 		JMenuBar mbar = new JMenuBar();
 		
@@ -42,7 +42,45 @@ public class ApplicationWindow extends JFrame {
 				System.exit(0);
 			}
 		});
-		mnuFile.add(miExit);
+		
+		
+		JMenu mnuPresets = new JMenu("Presets");
+		JMenuItem miCPSC = new JMenuItem("Computer Science");
+		miCPSC.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jtfUrl.setText("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/70-Computer-Science");
+				text.setText("");
+			}
+		});
+		mnuPresets.add(miCPSC);
+		
+		JMenuItem miDATA = new JMenuItem("Data Science");
+		miDATA.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jtfUrl.setText("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/DATA-Data-Science");
+				text.setText("");
+			}
+		});
+		mnuPresets.add(miDATA);
+		
+		JMenuItem miFINA = new JMenuItem("Finance");
+		miFINA.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jtfUrl.setText("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/62-Finance");
+				text.setText("");
+			}
+		});
+		mnuPresets.add(miFINA);
+		
+		JMenuItem miTHEO = new JMenuItem("Theology");
+		miTHEO.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jtfUrl.setText("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/19-Theology");
+				text.setText("");
+			}
+		});
+		mnuPresets.add(miTHEO);
+		
 		
 		JMenu mnuHelp = new JMenu("Help");
 		JMenuItem miAbout = new JMenuItem("About");
@@ -53,14 +91,19 @@ public class ApplicationWindow extends JFrame {
 			}
 		});
 		mnuHelp.add(miAbout);
-		
+			
+		mnuFile.add(mnuPresets);
+		mnuFile.add(miExit);
 		mbar.add(mnuFile);
 		mbar.add(mnuHelp);
 		setJMenuBar(mbar);		
 	}
 	
+	/**
+	 * Main application window configuration and events
+	 */
 	public ApplicationWindow() {
-		setTitle("Krejcik Web Scraper Application");
+		setTitle("Krejcik - Lewis Course Catalog Scraper");
 		setBounds(100,50,500,500);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -72,46 +115,61 @@ public class ApplicationWindow extends JFrame {
 		panSouth.setLayout(new FlowLayout());
 		
 		JLabel lblUrl = new JLabel("Enter URL:");
-		JTextField jtfUrl = new JTextField("", 20);
+		//JTextField jtfUrl = new JTextField("", 30);
 		
 		text = new JTextArea();
 		Font f = new Font("Monospaced", Font.BOLD, 12);
 		text.setFont(f);
-		text.setText("Enter a URL");
 		text.setEditable(false);
 		text.setLineWrap(true);
 		JScrollPane scroll = new JScrollPane(text);
 		c.add(scroll, BorderLayout.CENTER);		
 		
-		
+		/**
+		 * Button to retrieve HTML data from a URL, create an array list, and display the contents on the screen.
+		 */
 		JButton btnFetch = new JButton("Fetch");
 		btnFetch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// 
-				courses = HtmlParser.parseCourseData("http://lewisu.smartcatalogiq.com/Undergrad-2019-2020/Undergraduate-Catalog/Course-Descriptions/70-Computer-Science");
-				text.setText(CourseFileWriter.writeCoursesToScreen(courses));
+				try {
+					courses = HtmlParser.parseCourseData(jtfUrl.getText());
+					text.setText(CourseFileWriter.writeCoursesToScreen(courses));
+				} catch (Exception e2) {
+				}
+								
 			}
 		});
+		
+		/**
+		 * Button to save the current array list to a text file.
+		 */
 		JButton btnSaveToText = new JButton("Save to Text");
 		btnSaveToText.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				JFileChooser jfc = new JFileChooser();
-				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					// TODO CREATE FILE AT THIS LOCATION
-					// jfc.getSelectedFile().getPath();
+				if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					if (CourseFileWriter.writeCoursesToTextFile(courses, jfc.getSelectedFile().getPath()+".txt")) {
+						JOptionPane.showMessageDialog(null, "File saved");
+					} else {
+						JOptionPane.showMessageDialog(null, "Error saving file. Please try again.");
+					}
 				}
 			}
 		});
+		
+		/**
+		 * Button to save the current array list to a JSON file.
+		 */
 		JButton btnSaveToJSON = new JButton("Save to JSON");
 		btnSaveToJSON.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				JFileChooser jfc = new JFileChooser();
-				if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					// TODO CREATE FILE AT THIS LOCATION
-					// jfc.getSelectedFile().getPath();
-					
+				if (jfc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+					if (CourseFileWriter.writeCoursesToJSON(courses, jfc.getSelectedFile().getPath()+".json")) {
+						JOptionPane.showMessageDialog(null, "File saved");
+					} else {
+						JOptionPane.showMessageDialog(null, "Error saving file. Please try again.");
+					}
 				}
 			}
 		});
@@ -130,6 +188,10 @@ public class ApplicationWindow extends JFrame {
 		setupMenu();
 	}
 	
+	/**
+	 * Main function to initialize application window.
+	 * 
+	 */
 	public static void main(String[] args) {
 		ApplicationWindow frm = new ApplicationWindow();
 		frm.setVisible(true);
