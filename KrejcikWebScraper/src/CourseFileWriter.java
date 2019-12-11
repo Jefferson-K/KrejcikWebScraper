@@ -7,16 +7,17 @@ import org.json.*;
 This class outputs course information to the screen and to multiple file formats.
 @author Jeff Krejcik
 */
-public class FileWriter {
+public class CourseFileWriter {
 	/**
 	 * Outputs course data to the screen
 	 * @param members, an ArrayList of all members to be displayed
 	 */
-	public static void writeCoursesToScreen(ArrayList<Course> courses) {
+	public static String writeCoursesToScreen(ArrayList<Course> courses) {
+		String output = "";
 		for (Course c : courses) {
-			System.out.println(c);
-			// TODO: Create a string to return to text box
+			output += c.toString() + "\n\n";
 		}
+		return output;
 	}
 	
 	
